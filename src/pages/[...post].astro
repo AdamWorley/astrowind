@@ -1,0 +1,39 @@
+---
+import ToBlogLink from '~/components/blog/ToBlogLink.astro';
+import Layout from '../layouts/Layout.astro';
+
+import { getContent } from '../utils/umbraco.ts';
+
+interface Foo {
+  _id: string;
+  name: string;
+  _url: string;
+  _createDate: Date;
+  excerpt: string;
+  bodyText: string;
+}
+
+export async function getStaticPaths() {
+  const articles = await getContent('post');
+
+  return articles._embedded.content.map((article: Foo) => ({
+    params: { slug: article._url, post: article._url },
+    props: { name: article.name, createdDate: article._createDate, body: article.bodyText },
+  }));
+}
+
+const { name, createdDate, body } = Astro.props;
+---
+
+<Layout>
+  <section class="py-8 sm:py-16 lg:py-20 mx-auto">
+    <article class="text-pretty w-[70ch] mx-auto">
+      <header>
+        <h1>{name}</h1>
+        <p>{createdDate}</p>
+        <div set:html={body} />
+        <ToBlogLink />
+      </header>
+    </article>
+  </section>
+</Layout>

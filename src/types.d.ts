@@ -1,6 +1,14 @@
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 import type { HTMLAttributes, ImageMetadata } from 'astro/types';
 
+export interface UmbracoPost {
+  publishDate: string;
+  excerpt: string;
+  id: string;
+  title: string;
+  url: string;
+}
+
 export interface Post {
   /** A unique ID number that identifies a post. */
   id: string;

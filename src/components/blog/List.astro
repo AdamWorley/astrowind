@@ -1,12 +1,36 @@
 ---
 import Item from '~/components/blog/ListItem.astro';
-import type { Post } from '~/types';
+import type { UmbracoPost } from '~/types';
 
-export interface Props {
-  posts: Array<Post>;
+interface Foo {
+  _id: string;
+  name: string;
+  _url: string;
+  _createDate: Date;
+  excerpt: string;
 }
 
-const { posts } = Astro.props;
+// //Connecting to the Heartcore project on Cloud
+// const client = new Client({ projectAlias: 'adams-discreet-penguin' });
+
+// // Fetch all posts from Umbraco Heartcore
+
+// const response = await client.delivery.content.byContentType('post');
+
+const response = await fetch('https://cdn.umbraco.io/content/1d770f10-d1ca-4a26-9d68-071e2c9f7ac1/children', {
+  headers: { 'umb-project-alias': 'adams-discreet-penguin' },
+});
+
+const res = await response.json();
+
+// Assuming your posts are in the "items" array. You might need to adjust this based on your API response structure.
+const posts: UmbracoPost[] = res._embedded.content.map((item: Foo) => ({
+  id: item._id,
+  title: item.name,
+  url: item._url,
+  publishDate: item._createDate,
+  excerpt: item.excerpt,
+}));
 ---
 
 <ul>

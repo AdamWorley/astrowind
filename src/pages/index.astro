@@ -1,21 +1,40 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 
-import Hero from '~/components/widgets/Hero.astro';
-import Note from '~/components/widgets/Note.astro';
+import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import Content from '~/components/widgets/Content.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
 import Features from '~/components/widgets/Features.astro';
 import Features2 from '~/components/widgets/Features2.astro';
-import Steps from '~/components/widgets/Steps.astro';
-import Content from '~/components/widgets/Content.astro';
-import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
-import FAQs from '~/components/widgets/FAQs.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Note from '~/components/widgets/Note.astro';
 import Stats from '~/components/widgets/Stats.astro';
-import CallToAction from '~/components/widgets/CallToAction.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import { getContent } from '../utils/umbraco.ts';
 
 const metadata = {
   title: 'AstroWind — Free template for creating websites with Astro + Tailwind CSS',
   ignoreTitleTemplate: true,
 };
+
+interface Icon {
+  src: string;
+}
+
+interface Feature {
+  name: string;
+  description: string;
+  icon: Icon;
+}
+
+const featuresResponse = await getContent('features');
+
+const features = featuresResponse._embedded.content.map((f: Feature) => ({
+  title: f.name,
+  description: f.description,
+  icon: `tabler:${f.icon.src.split('/').at(-1)?.split('.')[0]}`,
+}));
 ---
 
 <Layout metadata={metadata}>
@@ -55,7 +74,7 @@ const metadata = {
   <Note />
 
   <!-- Features Widget *************** -->
-
+  <!-- items={features} -->
   <Features
     id="features"
     tagline="Features"
